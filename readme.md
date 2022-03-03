@@ -19,11 +19,17 @@ response:
 
 ```
 ## 应用层协议(json)
+#### json protocol
 ```json
 {
     
 }
 
-
+```
+#### payload
+```
+{
+    "method":[arg1,arg2,arg3]
+}
 
 ```

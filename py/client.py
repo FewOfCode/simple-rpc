@@ -18,7 +18,7 @@ if __name__ =="__main__":
     PORT = 9527              # The same port as used by the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((HOST, PORT))
-        payload = json.dumps(["hello world"],ensure_ascii=False)
+        payload = json.dumps({"hello":["linlin"]},ensure_ascii=False)
         msg = f"""version:1\ncontent-length:{len(payload)}\n\n{payload}"""
         s.sendall(msg.encode("utf-8"))
         header = read_header(socket=s) #

@@ -27,7 +27,7 @@ class SimpleServer():
         self.__server.listen()
         self.conn_manager:ConnectionManager = ConnectionManager.register(self)
         self.conn_manager.inputs.append(self.__server)
-        self.adapter:Adapter = Adapter.register(self)
+        self.adapter:Adapter = Adapter.register(self,r"../protocols/simple.json")
 
         while self.conn_manager.inputs:
             # 调用一个内核 select 方法，返回可读/可写/异常的文件描述符列表
@@ -46,7 +46,7 @@ class SimpleServer():
                     connection.setblocking(0)
                     self.conn_manager.add_conn(connection) # 建立连接，新的SOCKET添加到inputs
                 else:
-                    # 防止下次再次去select一次，在handle处理完后再添加回来
+                    # 防止下次再次去select一次,在handle处理完后再添加回来
                     self.conn_manager.inputs.remove(s)
                     task = RequestDealPool.submit(create_task,s,self.conn_manager)
                     task.add_done_callback(self.handle)
@@ -62,16 +62,17 @@ class SimpleServer():
                 payload  = payload.decode("utf-8")
             try:
                 payload = json.loads(payload)
-                response = f"this is simpleRPC,i get request:{payload}"
-                msg = f"""version:1\ncontent-length:{len(response)}\n\n{response}"""
-                print("send response",msg)
-                socket.sendall(msg.encode("utf-8")) #
+                for method_name,args in payload.items():
+                    res = self.adapter(method=method_name,*args)
+                    print(f"call method:{method_name}, result:{res}")
             except:
                 ## NOT JSON FORMAT,ignore
                 print(">>> not a json format")
             finally:
                 socket_manager.add_input(socket)
 
+    def hello(self,name:str):
+        return f"hello {name}"
 
 class ConnectionManager():
     
