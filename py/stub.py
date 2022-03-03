@@ -8,10 +8,11 @@ class Adapter(object):
     def register(cls,server):
         return cls(server=server)
 
-
     def __call__(self,method:str,*args,**kwargs):
         self.method = method
 
+    def parse(self,request_data):
+        ...
     
     def is_method_valid(self):
         if self.method.startswith("__"):
