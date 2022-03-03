@@ -1,14 +1,12 @@
+from ast import arg
 import json
 import select, socket, sys,time
-import socketserver
 import queue
 from threading import Event
-from email.parser import Parser
-from urllib import response
 from handle import read_header,parse_header_line
 from pool import create_task,RequestDealPool
 import concurrent
-from stub import Adapter
+from adapter import Adapter
 
 class SimpleServer():
 
@@ -27,7 +25,7 @@ class SimpleServer():
         self.__server.listen()
         self.conn_manager:ConnectionManager = ConnectionManager.register(self)
         self.conn_manager.inputs.append(self.__server)
-        self.adapter:Adapter = Adapter.register(self,r"../protocols/simple.json")
+        self.adapter:Adapter = Adapter.register(self,r"D:\code\python\simpleRPC\protocols\simple.json")
 
         while self.conn_manager.inputs:
             # 调用一个内核 select 方法，返回可读/可写/异常的文件描述符列表
@@ -63,9 +61,11 @@ class SimpleServer():
             try:
                 payload = json.loads(payload)
                 for method_name,args in payload.items():
-                    res = self.adapter(method=method_name,*args)
+                    print(method_name,args)
+                    res = self.adapter(method_name,*args)
                     print(f"call method:{method_name}, result:{res}")
-            except:
+                    
+            except json.JSONDecodeError:
                 ## NOT JSON FORMAT,ignore
                 print(">>> not a json format")
             finally:

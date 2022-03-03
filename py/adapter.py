@@ -1,18 +1,15 @@
-from crypt import methods
-from curses import A_ALTCHARSET
+
 import json,os
 from mimetypes import guess_type
-import re
-from tokenize import String
-from xml.dom.minidom import Attr
 class Adapter(object):
 
     def __init__(self,server,protocol) -> None:
         self.__server = server
         self.method = None
-        if os.path.isdir(protocol):
+        if os.path.isfile(protocol):
             try:
-                self.protocol = json.load(fp=protocol)
+                with open(protocol,"r",encoding="utf-8") as f:
+                    self.protocol = json.load(fp=f)
             except json.JSONDecodeError:
                 raise AttributeError(F"protocol content is valid")
             assert self.is_protocol_valid()
@@ -33,6 +30,7 @@ class Adapter(object):
         self.is_parameter_valid()
 
         res = getattr(self.__server,self.method)(*self.args)
+
         return res
 
     def parse(self,request_data):
@@ -70,7 +68,7 @@ class Adapter(object):
                 f"method:{self.method} expect to get {len(expect_paramters.keys())} position parameters,but got:{len(self.args)}"
             )
         ## 2 校验参数类型类型是否合法
-        for index,item in enumerate(expect_paramters):
+        for index,item in enumerate(expect_paramters.items()):
             arg_name,expect_type = item
             if not isinstance(self.args[index],guess_type(expect_type)):
                 raise TypeError(
