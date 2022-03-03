@@ -1,0 +1,11 @@
+{
+    "server":"simpleRPC",
+    "method":{
+        "hello":{
+            "parameters":{
+                "name":"string"
+            },
+            "return":"string"
+        }
+    }
+}

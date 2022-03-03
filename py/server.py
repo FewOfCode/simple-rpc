@@ -8,6 +8,7 @@ from urllib import response
 from handle import read_header,parse_header_line
 from pool import create_task,RequestDealPool
 import concurrent
+from stub import Adapter
 
 class SimpleServer():
 
@@ -17,6 +18,7 @@ class SimpleServer():
         self.ip = ip
         self.stop_flag = Event()
         self.conn_manager = None
+        self.adapter = None
 
     def start(self):
         self.stop_flag.clear()
@@ -25,6 +27,7 @@ class SimpleServer():
         self.__server.listen()
         self.conn_manager:ConnectionManager = ConnectionManager.register(self)
         self.conn_manager.inputs.append(self.__server)
+        self.adapter:Adapter = Adapter.register(self)
 
         while self.conn_manager.inputs:
             # 调用一个内核 select 方法，返回可读/可写/异常的文件描述符列表
