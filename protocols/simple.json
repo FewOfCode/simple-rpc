@@ -1,6 +1,6 @@
 {
     "server":"simpleRPC",
-    "method":{
+    "methods":{
         "hello":{
             "parameters":{
                 "name":"string"
