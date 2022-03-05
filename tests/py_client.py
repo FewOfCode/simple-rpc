@@ -9,8 +9,6 @@ class TestClient(BaseClient):
         super().__init__(remote, remote_port, name)
 
 
-
-
 if __name__ =="__main__":
     with TestClient() as tc:
         print(tc.add(1,2))
