@@ -27,9 +27,14 @@ response:
 
 ```
 #### payload
+##### request
 ```
 {
     "method":[arg1,arg2,arg3]
 }
 
 ```
+#### response
+{
+    "return":any
+}

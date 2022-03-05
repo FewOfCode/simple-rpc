@@ -1,29 +1,44 @@
+
 import json
 import socket
 import threading
 import time
-from handle import read_header,parse_header_line
-    # while True:
-    #     try:
-    #         data = s.recv(1024)
-    #         print('Received', repr(data))
-    #         s.send("close".encode("utf-8"))
-    #     except:
-    #         break
-    #     time.sleep(1)
+from py.handle import read_header,parse_header_line
+from py.frame import RequestMessage
+class BaseClient(object):
 
-
-if __name__ =="__main__":
-    HOST = '127.0.0.1'    # The remote host
-    PORT = 9527              # The same port as used by the server
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
-        payload = json.dumps({"hello":["linlin"]},ensure_ascii=False)
-        msg = f"""version:1\ncontent-length:{len(payload)}\n\n{payload}"""
-        s.sendall(msg.encode("utf-8"))
-        header = read_header(socket=s) #
+    def __init__(self,remote="127.0.0.1",remote_port=9527,name =None) -> None:
+        self.__client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__client.connect((remote, remote_port))
+    
+    def __call__(self, method, *args, **kwargs):
+        # todo support kwargs
+        print("call method",method,args,kwargs)
+        if isinstance(args,tuple):
+            args = list(args)
+        payload = json.dumps({method:args},ensure_ascii=False)
+        msg:RequestMessage = RequestMessage.pack(message=payload)
+        self.__client.sendall(msg)
+        header = read_header(socket=self.__client) #
         print(f"get header :{header}")
         payload_length = header.get("content-length",None)
-        if payload_length  and int(payload_length)!=0:
-            payload = s.recv(int(payload_length)).decode("utf-8")
-            print(f"get response:{payload}")
+        if payload_length and int(payload_length)!=0:
+            payload = self.__client.recv(int(payload_length)).decode("utf-8")
+            print(f"get response:{payload}")  
+            payload_ = json.loads(payload)
+            return payload_.get("return",None)
+        else:
+            return None
+
+    def __getattr__(self, method):
+        return lambda *args, **kwargs: self(method, *args, **kwargs)
+
+    def  __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.__client:
+            self.__client.close()
+
+
+

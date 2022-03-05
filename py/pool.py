@@ -1,7 +1,7 @@
 ## todo deal every request in threadPool
 import concurrent.futures
 import os
-from handle import read_header,parse_header_line
+from py.handle import read_header,parse_header_line
 # 网络IO处理线程池
 RequestDealPool = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()*3)
 
@@ -10,7 +10,8 @@ def create_task(socket,socket_manager):
     try:
         header = read_header(socket=socket) #
     except ConnectionResetError as exc:
-        print(">>> client close connection")
+        print(f">>> connection: {socket} close.{socket.fileno()}")
+        socket.close()
         socket_manager.remove_conn(socket)
         return None,None,None
     print(f"get header :{header}")
