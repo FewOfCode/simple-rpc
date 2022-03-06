@@ -38,6 +38,7 @@ class BaseClient(object):
     
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.__client:
+            self.__client.shutdown(1)
             self.__client.close()
 
 

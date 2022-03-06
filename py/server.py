@@ -4,6 +4,7 @@ import select, socket, sys,time
 from telnetlib import KERMIT
 import queue
 from threading import Event
+from tkinter.tix import Tree
 from py.pool import create_task,RequestDealPool
 import concurrent
 from py.adapter import Adapter
@@ -22,7 +23,7 @@ class BaseServer():
 
     def start(self):
         self.stop_flag.clear()
-        self.__server.setblocking(False) # 设置为非阻塞
+        self.__server.setblocking(True) # 设置为非阻塞
         self.__server.bind((self.ip, self.port))
         self.__server.listen()
         self.conn_manager:ConnectionManager = ConnectionManager.register(self)
@@ -33,6 +34,7 @@ class BaseServer():
             # 调用一个内核 select 方法，返回可读/可写/异常的文件描述符列表,只有 文件状态改变，才会返回
             # 参数：1.需要检验是否为输入状态的socket列表，2 是否为可写状态的输出socket列表, 3是否为异常的socket列表
             # 返回的三个列表为对应的输入的子集
+            # non-blocking/ blocking+select
             try:
                 # print(">>> check socket list",self.conn_manager.inputs)
                 readable, _, expection_s = select.select(
@@ -97,7 +99,7 @@ class ConnectionManager():
     def __new__(cls,*args,**kwargs):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-        return cls.__instance        
+        return cls.__instance          
 
     def __init__(self,server) -> None:
         self.__server = server
