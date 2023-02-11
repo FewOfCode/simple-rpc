@@ -1,4 +1,7 @@
-# 一个简单的RPC尝试
+# Simple RPC
+
+- 默认端口：1840
+
 ## 传输层协议
 ```text
 request:
