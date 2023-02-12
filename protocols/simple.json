@@ -1,11 +1,12 @@
 {
-    "server":"simpleRPC",
-    "methods":{
-        "hello":{
-            "parameters":{
-                "name":"string"
+    "engine":"SimpleRPC",
+    "version": "v1",
+    "methods": {
+        "hello": {
+            "parameters": {
+                "name": "string"
             },
-            "return":"string"
+            "return": "string"
         }
     }
 }
