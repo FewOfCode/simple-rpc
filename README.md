@@ -25,12 +25,12 @@ payload:xxxx
 
 ```json
 {
-	"method_name": {
-		"params1": "string",
-		"params2": 0,
-		"params3": {},
-        "params4": []
-	}
+  "method_name": {
+    "params1": "string",
+    "params2": 0,
+    "params3": {},
+    "params4": []
+  }
 }
 ```
 
@@ -53,27 +53,27 @@ payload:xxxx
 
 ```json
 {
-    "return": string|number|{}|[]
+  "return": "string|number|{}|[]"
 }
 ```
 
 
 
-## 应用层协议定义(json/yaml)
+## 应用层协议定义(Json/Yaml)
 
-### json protocol
+### Json protocol
 ```json
 {
-    "engine":"SimpleRPC",
-    "version": "v1",
-    "methods": {
-        "hello": {
-            "parameters": {
-                "name": "${数据类型}"
-            },
-            "return": "${数据类型}"
-        }
+  "engine":"SimpleRPC", 
+  "version": "v1", 
+  "methods": {
+    "hello": {
+      "parameters": {
+        "name": "${数据类型}"
+      }, 
+      "return": "${数据类型}"
     }
+  }
 }
 ```
 ### yaml protocol
@@ -82,10 +82,10 @@ payload:xxxx
 engine: SimpleRPC
 version: v1
 methods:
-	- hello:
-		parameters: 
-			name: "${数据类型}"
-        return: "${数据类型}"  
+  - hello:
+      parameters: 
+        name: "${数据类型}"
+      return: "${数据类型}"  
 ```
 
 ### 数据类型定义
