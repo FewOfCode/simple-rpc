@@ -1,23 +1,27 @@
-# 一个简单的RPC尝试
+# Simple RPC
+
+- 默认端口：1840
+
 ## 传输层协议
-```text
-request:
-    version:1<space>\r\n
-    content-length:xx<space>\r\n
-    \r\n
-    .......  payload
 
-```
+请求协议
 
 ```text
-response:
-    version:1<space>\r\n
-    content-length:xx<space>\r\n
-    \r\n
-    .......  payload    
-
-
+version:1\r\n
+content-length:xx\r\n
+\r\n
+payload:{}
 ```
+
+响应协议
+
+```text
+version:1\r\n
+content-length:xx\r\n
+\r\n
+payload:{}
+```
+
 ## 应用层协议(json)
 #### json protocol
 ```json
