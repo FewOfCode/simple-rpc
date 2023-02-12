@@ -2,46 +2,102 @@
 
 - 默认端口：1840
 
+
+
 ## 传输层协议
 
-请求协议
+### 请求协议
+
+| 字段           | 说明         | 备注 |
+| -------------- | ------------ | ---- |
+| version        | 传输协议版本 |      |
+| content-length | payload长度  |      |
+| payload        | 请求消息负载 |      |
 
 ```text
 version:1\r\n
-content-length:xx\r\n
+content-length:1024\r\n
 \r\n
-payload:{}
+payload:xxxx
 ```
 
-响应协议
+#### 请求协议payload规范
 
-```text
-version:1\r\n
-content-length:xx\r\n
-\r\n
-payload:{}
-```
-
-## 应用层协议(json)
-#### json protocol
 ```json
 {
-    
+	"method_name": {
+		"params1": "string",
+		"params2": 0,
+		"params3": {},
+        "params4": []
+	}
 }
+```
 
-```
-#### payload
-##### request
-```
-{
-    "method":[arg1,arg2,arg3]
-}
+### 响应协议
 
+| 字段           | 说明         | 备注 |
+| -------------- | ------------ | ---- |
+| version        | 传输协议版本 |      |
+| content-length | payload长度  |      |
+| payload        | 响应消息负载 |      |
+
+```text
+version:1\r\n
+content-length:1024\r\n
+\r\n
+payload:xxxx
 ```
-#### response
+
+#### 响应协议payload规范
+
+```json
 {
-    "return":any
+    "return": string|number|{}|[]
 }
+```
+
+
+
+## 应用层协议定义(json/yaml)
+
+### json protocol
+```json
+{
+    "engine":"SimpleRPC",
+    "version": "v1",
+    "methods": {
+        "hello": {
+            "parameters": {
+                "name": "${数据类型}"
+            },
+            "return": "${数据类型}"
+        }
+    }
+}
+```
+### yaml protocol
+
+```yaml
+engine: SimpleRPC
+version: v1
+methods:
+	- hello:
+		parameters: 
+			name: "${数据类型}"
+        return: "${数据类型}"  
+```
+
+### 数据类型定义
+
+| 数据类型 | 说明                     |
+| -------- | ------------------------ |
+| string   | 普通字符串 \| 时间字符串 |
+| number   | 数值                     |
+| array    | 数组                     |
+| object   | 对象                     |
+
+
 
 
 ## demo
