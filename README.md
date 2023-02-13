@@ -2,8 +2,6 @@
 
 - 默认端口：1840
 
-
-
 ## 传输层协议
 
 ### 请求协议
@@ -25,11 +23,15 @@ payload:xxxx
 
 ```json
 {
-  "method_name": {
+  "method_name": "string",
+  "parameters": {
     "params1": "string",
     "params2": 0,
     "params3": {},
     "params4": []
+  },
+  "options": {
+    "java_interface_name": "string"
   }
 }
 ```
@@ -57,25 +59,25 @@ payload:xxxx
 }
 ```
 
-
-
 ## 应用层协议定义(Json/Yaml)
 
 ### Json protocol
+
 ```json
 {
-  "engine":"SimpleRPC", 
-  "version": "v1", 
+  "engine": "SimpleRPC",
+  "version": "v1",
   "methods": {
     "hello": {
       "parameters": {
         "name": "${数据类型}"
-      }, 
+      },
       "return": "${数据类型}"
     }
   }
 }
 ```
+
 ### yaml protocol
 
 ```yaml
@@ -83,7 +85,7 @@ engine: SimpleRPC
 version: v1
 methods:
   - hello:
-      parameters: 
+      parameters:
         name: "${数据类型}"
       return: "${数据类型}"  
 ```
@@ -97,14 +99,12 @@ methods:
 | array    | 数组                     |
 | object   | 对象                     |
 
-
-
-
 ## demo
 
 ### python
 
 #### server
+
 ```python
 class TestServer(BaseServer):
 
@@ -123,6 +123,7 @@ ts.start()
 ```
 
 #### client
+
 ```python
 class TestClient(BaseClient):
 
@@ -139,25 +140,26 @@ with TestClient() as tc:
 ```
 
 #### protocol
+
 ```json
 {
-    "server":"TestServer",
-    "methods":{
-        "add":{
-            "parameters":{
-                "a":"int",
-                "b":"int"
-            },
-            "return":"int"
-        },
-        "sub":{
-            "parameters":{
-                "a":"int",
-                "b":"int"
-            },
-            "return":"int"
-        }
+  "server": "TestServer",
+  "methods": {
+    "add": {
+      "parameters": {
+        "a": "int",
+        "b": "int"
+      },
+      "return": "int"
+    },
+    "sub": {
+      "parameters": {
+        "a": "int",
+        "b": "int"
+      },
+      "return": "int"
     }
+  }
 }
 
 ```
