@@ -1,0 +1,7 @@
+engine: SimpleRPC
+version: v1
+methods:
+    - hello:
+        parameters:
+            name: "string"
+        return: "string"
