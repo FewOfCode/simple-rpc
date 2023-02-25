@@ -1,5 +1,6 @@
 {
     "server":"TestServer",
+    "version":"v1",
     "methods":{
         "add":{
             "parameters":{

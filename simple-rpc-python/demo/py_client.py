@@ -5,7 +5,7 @@ from py.client import BaseClient
 
 class TestClient(BaseClient):
 
-    def __init__(self, remote="127.0.0.1", remote_port=9527, name=None) -> None:
+    def __init__(self, remote="127.0.0.1", remote_port=1840, name=None) -> None:
         super().__init__(remote, remote_port, name)
 
 
