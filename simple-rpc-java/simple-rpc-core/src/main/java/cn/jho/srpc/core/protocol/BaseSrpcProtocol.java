@@ -26,5 +26,4 @@ public abstract class BaseSrpcProtocol {
         this.contentLength = contentLength;
     }
 
-
 }
