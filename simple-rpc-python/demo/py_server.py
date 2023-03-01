@@ -4,7 +4,7 @@ from py.server import BaseServer
 
 class TestServer(BaseServer):
 
-    def __init__(self, ip="127.0.0.1", port=9527, protocol=None) -> None:
+    def __init__(self, ip="127.0.0.1", port=1840, protocol=None) -> None:
         super().__init__(ip, port, protocol)
 
     def add(self,a,b):

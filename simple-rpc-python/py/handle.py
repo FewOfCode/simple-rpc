@@ -1,5 +1,3 @@
-
-import time
 def read_header(socket):
     ## 参考http协议
     ## @https://stackoverflow.com/questions/667640/how-to-tell-if-a-connection-is-dead-in-python
@@ -7,9 +5,7 @@ def read_header(socket):
     headers = {}
     count = 0
     while True:
-        print("begin read data")
         part = socket.recv(1)
-        print("get data",part)
         count+=1
         if len(part) == 0:
             ## 客户端断开后会发送空的字符串 b""

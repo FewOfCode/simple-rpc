@@ -11,7 +11,7 @@ from py.adapter import Adapter
 from py.frame import RequestMessage
 class BaseServer():
 
-    def __init__(self,ip="127.0.0.1",port=9527,protocol=None) -> None:
+    def __init__(self,ip="127.0.0.1",port=1840,protocol=None) -> None:
         assert protocol is not None,"protocol can not be None"
         self.protocol=protocol
         self.__server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -61,8 +61,6 @@ class BaseServer():
                 self.conn_manager.close_all()
                 break
 
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> end")
-
     def handle(self,future):
         payload,socket_manager,socket = future.result()
         if payload is None and socket_manager is None and socket is None:
@@ -80,14 +78,11 @@ class BaseServer():
                     res = self.adapter(method_name,*args)
                     res_msg:RequestMessage =RequestMessage.pack({"return":res})
                     socket.sendall(res_msg)
-                print(">>> deal finish")
             except json.JSONDecodeError:
                 ## NOT JSON FORMAT,ignore
                 print(">>> not a json format")
             finally:
-                print(">>> add socket to readable")
                 socket_manager.add_input(socket)
-                # print(socket_manager.inputs)
 
     def hello(self,name:str):
         return f"hello {name}"
