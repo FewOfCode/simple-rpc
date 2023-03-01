@@ -7,7 +7,7 @@ import java.util.Map;
  *
  * @author JHO xu-jihong@qq.com
  */
-public class SrpcRequestPayLoad {
+public class SrpcRequestPayload {
 
     private String methodName;
     private Map<String, Object> parameters;
