@@ -1,3 +1,6 @@
+from asyncio.streams import StreamReader   
+
+
 def read_header(socket):
     ## 参考http协议
     ## @https://stackoverflow.com/questions/667640/how-to-tell-if-a-connection-is-dead-in-python
@@ -20,6 +23,21 @@ def read_header(socket):
                 else:
                     headers.update(parse_header_line(line))
                     line = b"" 
+    return headers
+
+
+
+
+async def read_header(stream_reader:StreamReader):
+    line = b""
+    headers = {}
+    while True:
+        line = await stream_reader.readline()
+        if  line in (b'\r\n', b'\n', b''):
+            break
+        else:
+            headers.update(parse_header_line(line))
+            line = b""     
     return headers
 
 def parse_header_line(line):
