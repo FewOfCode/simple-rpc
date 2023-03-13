@@ -26,8 +26,6 @@ def read_header(socket):
     return headers
 
 
-
-
 async def read_header(stream_reader:StreamReader):
     line = b""
     headers = {}

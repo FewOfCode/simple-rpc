@@ -6,7 +6,7 @@ from py.adapter import Adapter
 import asyncio
 from asyncio.streams import StreamReader,StreamWriter
 from py.handle import read_header
-
+import json
 class BaseServer():
 
     def __init__(self,ip="127.0.0.1",port=1840,protocol=None) -> None:
@@ -52,6 +52,23 @@ async def client_connected_cb(reader:StreamReader, writer:StreamWriter):
         if payload_length  and int(payload_length)!=0:
             payload = await reader.read(payload_length)
             print(f"get payload:{payload}")
+            
+            ## call function
+            if isinstance(payload,bytes):
+                payload  = payload.decode("utf-8")
+            try:
+                payload = json.loads(payload)
+                for method_name,args in payload.items():
+                    ...
+                    # res = adapter(method_name,*args)
+                    # res_msg:RequestMessage =RequestMessage.pack({"return":res})
+                    # socket.sendall(res_msg)
+            except json.JSONDecodeError:
+                ## NOT JSON FORMAT,ignore
+                print(">>> not a json format")
+            finally:
+                # socket_manager.add_input(socket)
+                ...
         else:
             payload = None
 
