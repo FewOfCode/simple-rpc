@@ -5,32 +5,38 @@ from threading import Event
 from py.adapter import Adapter
 import asyncio
 from asyncio.streams import StreamReader,StreamWriter
-from py.handle import read_header
+from py.handle import async_read_header
 import json
+from py.adapter import Adapter
+from functools import partial
+from py.frame import RequestMessage
+import datetime,time
+
 class BaseServer():
 
     def __init__(self,ip="127.0.0.1",port=1840,protocol=None) -> None:
-        # assert protocol is not None,"protocol can not be None"
+        assert protocol is not None,"protocol can not be None"
         self.protocol=protocol
         self.port =port 
         self.ip = ip
         self.stop_flag = Event()
         self.conn_manager = None
-        self.adapter = None
+        self.adapter:Adapter = Adapter.register(self,self.protocol)
         self.__server=None
 
     async def start(self):
         try:
             self.stop_flag.clear()
-            self.conn_manager:ConnectionManager = ConnectionManager.register(self)
-            self.__server = await asyncio.start_server(client_connected_cb, self.ip, self.port)
+            self.__server = await asyncio.start_server(partial(client_connected_cb,server=self), self.ip, self.port)
             async with self.__server:
                 await self.__server.serve_forever()
-            self.conn_manager.inputs.append(self.__server)
-            self.adapter:Adapter = Adapter.register(self,self.protocol)
+
         except KeyboardInterrupt:
             #TODO close socket and eventloop
             print(">>> server close")
+
+    def _close(self):
+        self.__server.close()
 
     ## TODO SUPPORT ASYNC FUNCTION
     def add(self,a,b):
@@ -40,89 +46,40 @@ class BaseServer():
         return a-b
 
 
-async def client_connected_cb(reader:StreamReader, writer:StreamWriter):
+async def client_connected_cb(reader:StreamReader, writer:StreamWriter,server:BaseServer=None):
     # todo add transport to conn manager
     while True: # todo break
         try:
-            header = await read_header(reader)
+            header = await async_read_header(reader)
         except ConnectionResetError as exc:
-            print(">>> conn reset when read header") # todo remove conn fron manager
+            print(f"client close... transport:{reader._transport}")
+            reader._transport.close()
+            break
         print(f"get header :{header}")
+
         payload_length = header.get("content-length",None)
         if payload_length  and int(payload_length)!=0:
-            payload = await reader.read(payload_length)
+            payload = await reader.read(int(payload_length))
             print(f"get payload:{payload}")
-            
-            ## call function
             if isinstance(payload,bytes):
                 payload  = payload.decode("utf-8")
             try:
                 payload = json.loads(payload)
                 for method_name,args in payload.items():
-                    ...
-                    # res = adapter(method_name,*args)
-                    # res_msg:RequestMessage =RequestMessage.pack({"return":res})
-                    # socket.sendall(res_msg)
+                    ##  call function and get result
+                    res = server.adapter(method_name,*args)
+                    res_msg:RequestMessage =RequestMessage.pack({"return":res})
+                    ## write response
+                    writer.write(res_msg)
+                    await writer.drain()
             except json.JSONDecodeError:
                 ## NOT JSON FORMAT,ignore
-                print(">>> not a json format")
-            finally:
-                # socket_manager.add_input(socket)
-                ...
+                print(">>> not a json format",payload)
         else:
             payload = None
-
-class ConnectionManager():
-    
-    __instance = None
-
-    def __new__(cls,*args,**kwargs):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls)
-        return cls.__instance          
-
-    def __init__(self,server) -> None:
-        self.__server = server
-        self.conn_cache={}
-        self.msg_cache= {}
-        self.inputs,self.outputs,self.exceptions=[],[],[]
-    
-    @classmethod
-    def register(cls,server)->"ConnectionManager":
-        return cls(server=server)
-
-    def add_conn(self,conn):
-        if conn not in self.inputs:
-            self.inputs.append(conn)
-        if conn not in self.conn_cache.keys():
-            self.conn_cache.update({conn.fileno():conn})
-            self.msg_cache.update({conn.fileno():queue.Queue()})
-    
-    def add_input(self,conn):
-        if conn not in self.inputs:
-            self.inputs.append(conn)   
-    
-    def add_output(self,conn):
-        if conn not in self.outputs:
-            self.outputs.append(conn)
-
-    def remove_conn(self,conn):
-        if conn in self.inputs:
-            self.inputs.remove(conn)  
-        if conn in self.outputs:
-            self.outputs.remove(conn)
-        if conn in self.exceptions:
-            self.exceptions.remove(conn)
-
-    def close_all(self):
-        for s in self.inputs:
-            s.close()
-        for s in self.outputs:
-            self.close()
-        for s in self.exceptions:
-            s.close()
+        header.clear()
 
 if  __name__=="__main__":
     # import simple
-    s = BaseServer()
+    s = BaseServer(protocol=r"D:\code\python\site\simple-rpc\simple-rpc-python\demo\test_protocol.json")
     asyncio.run(s.start())

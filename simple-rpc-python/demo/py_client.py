@@ -11,8 +11,7 @@ class TestClient(BaseClient):
 
 if __name__ =="__main__":
     with TestClient() as tc:
-        pass
-        # print(tc.add(1,2))
+        print(tc.add(1,2))
         # print(tc.sub(9,1))
-    import time
-    time.sleep(5)
+    # import time
+    # time.sleep(5)
