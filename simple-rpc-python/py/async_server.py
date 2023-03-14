@@ -41,11 +41,7 @@ class AsyncBaseServer():
         self.__server.close()
 
     ## TODO SUPPORT ASYNC FUNCTION
-    def add(self,a,b):
-        return a+b
 
-    def sub(self,a,b):
-        return a-b
 
 
 async def client_connected_cb(reader:StreamReader, writer:StreamWriter,server:AsyncBaseServer=None):
