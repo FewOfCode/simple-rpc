@@ -1,0 +1,19 @@
+{
+  "server": "TestServer",
+  "methods": {
+    "add": {
+      "parameters": {
+        "a": "int",
+        "b": "int"
+      },
+      "return": "int"
+    },
+    "sub": {
+      "parameters": {
+        "a": "int",
+        "b": "int"
+      },
+      "return": "int"
+    }
+  }
+}
