@@ -1,20 +1,38 @@
 {
-    "server":"TestServer",
-    "version":"v1",
-    "methods":{
-        "add":{
-            "parameters":{
-                "a":"int",
-                "b":"int"
+	"engine":"simpleRpc",
+  "version": "v1",
+  "services": {
+    "{{service1}}": {
+      "meta": {
+      },
+      "types": {
+        "{{自定义参数类型名称1}}": "{{自定义参数结构}}"
+      },
+      "methods": {
+        "{{类名}}": {
+          "{{方法名}}": {
+            "parameters": {
+              "参数一": "int",
+              "参数二": "{{自定义参数类型名称1}}"
             },
-            "return":"int"
+            "return": "int"
+          }
         },
-        "sub":{
-            "parameters":{
-                "a":"int",
-                "b":"int"
+        "{{类名2}}": {
+          "{{方法名}}": {
+            "parameters": {
+              "参数一": "int",
+              "参数二": "{{自定义参数类型名称1}}"
             },
-            "return":"int"
+            "return": "int"
+          }
         }
-    }
+      },
+      "options": {
+        "ConnectTimeout": 1000,
+        "SSL": false
+      }
+    },
+    "{{service2}}": {}
+  }
 }

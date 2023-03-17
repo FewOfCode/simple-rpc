@@ -65,15 +65,41 @@ payload:xxxx
 
 ```json
 {
-  "engine": "SimpleRPC",
+	"engine":"simpleRpc",
   "version": "v1",
-  "methods": {
-    "hello": {
-      "parameters": {
-        "name": "${数据类型}"
+  "services": {
+    "{{service1}}": {
+      "meta": {
       },
-      "return": "${数据类型}"
-    }
+      "types": {
+        "{{自定义参数类型名称1}}": "{{自定义参数结构}}"
+      },
+      "methods": {
+        "{{类名}}": {
+          "{{方法名}}": {
+            "parameters": {
+              "参数一": "int",
+              "参数二": "{{自定义参数类型名称1}}"
+            },
+            "return": "int"
+          }
+        },
+        "{{类名2}}": {
+          "{{方法名}}": {
+            "parameters": {
+              "参数一": "int",
+              "参数二": "{{自定义参数类型名称1}}"
+            },
+            "return": "int"
+          }
+        }
+      },
+      "options": {
+        "ConnectTimeout": 1000,
+        "SSL": false
+      }
+    },
+    "{{service2}}": {}
   }
 }
 ```
