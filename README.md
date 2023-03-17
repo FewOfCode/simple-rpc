@@ -24,6 +24,7 @@ payload:xxxx
 ```json
 {
   "method_name": "string",
+  "class_name":"class_name",
   "parameters": {
     "params1": "string",
     "params2": 0,
