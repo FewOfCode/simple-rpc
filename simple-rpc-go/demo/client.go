@@ -42,22 +42,37 @@ func main() {
 	}
 	defer conn.Close()
 	d := Method{
-		MethodName: "sub",
+		MethodName: "Sub",
 		Parameters: map[string]interface{}{
 			"param1": 2,
 			"param2": 1,
 		},
 		MethodClass: "Math",
 		Options: map[string]interface{}{
-			"timeout": 60,
+			"Attr1": 11,
 		},
 	}
 	msg, err := json.Marshal(d)
-
 	_msg, err := Pack(msg)
 	if err != nil {
 		fmt.Println("get error", err)
 	}
 	fmt.Println("after pack", string(_msg))
 	conn.Write(_msg)
+
+	// // 定义映射
+	// typeMap := map[string]reflect.Type{
+	// 	"int":    reflect.TypeOf(int(0)),
+	// 	"string": reflect.TypeOf(""),
+	// 	"float":  reflect.TypeOf(float64(0)),
+	// }
+
+	// // 获取类型
+	// t := typeMap["int"]
+
+	// // 创建变量并设置值
+	// v := reflect.New(t).Elem()
+	// // 输出变量值
+	// fmt.Println(v.Interface())
+
 }

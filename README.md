@@ -25,10 +25,11 @@ payload:xxxx
 {
   "method_name": "string",
   "class_name":"class_name",
+  "class_params":{}, // 对应的类的类参数处理
   "parameters": {
-    "params1": "string",
-    "params2": 0,
-    "params3": {},
+    "params1": ["aaa","string"],
+    "params2": [0,"int"],
+    "params3": [{}],
     "params4": []
   },
   "options": {

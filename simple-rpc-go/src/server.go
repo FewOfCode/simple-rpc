@@ -15,10 +15,12 @@ func process(conn net.Conn) {
 		header, body, err := Unpack(reader)
 		if err != nil {
 			fmt.Println("get message error", err)
+			break
 		}
 		result, err := handle(header, body)
 		if err != nil {
 			fmt.Println("handle error", err)
+			break
 		}
 		// 把结果发送出去
 		var msg = make(map[string]interface{})
@@ -26,6 +28,7 @@ func process(conn net.Conn) {
 		b, err := json.Marshal(msg)
 		if err != nil {
 			fmt.Println("convert to  json string error", err)
+			break
 		}
 		conn.Write(b)
 	}

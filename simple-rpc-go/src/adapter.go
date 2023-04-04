@@ -6,60 +6,55 @@ import (
 	"reflect"
 )
 
-var simpleRpcApi map[string]interface{}
+var simpleRpcApi map[string]reflect.Value = make(map[string]reflect.Value)
 
-func register(simpleRpcApi interface{}) {
-	// if simpleRpcApi != nil {
-
-	// } else {
-	// 	simpleRpcApi := make(map[string]interface{})
-	// }
-
+func Register(name string, T interface{}) {
+	if _, ok := simpleRpcApi[name]; ok {
+		return
+	}
+	simpleRpcApi[name] = reflect.ValueOf(T)
 }
 
 // func
 
-type Method struct {
+type Entry struct {
 	MethodName  string                 `json:"method_name"`
 	Parameters  map[string]interface{} `json:"parameters"`
 	MethodClass string                 `json:"method_class"`
 	Options     map[string]interface{} `json:"options"`
 }
 
-//NewPerson 构造函数
-func NewMethod(methodName, methodClass string, parameters, options map[string]interface{}) *Method {
-	return &Method{
-		MethodName:  methodName,
-		Parameters:  parameters,
-		MethodClass: methodClass,
-		Options:     options,
-	}
-}
-
-func (m *Method) call() (interface{}, error) {
-	ref := reflect.ValueOf(&simpleRpcApi)
-
-	f := reflect.ValueOf(ref).MethodByName(m.MethodName)
-
+func (m *Entry) Call() (interface{}, error) {
+	st := simpleRpcApi[m.MethodClass]
 	args := make([]reflect.Value, 0, len(m.Parameters))
-
 	for _, arg := range m.Parameters {
 		args = append(args, reflect.ValueOf(arg))
 	}
-	fmt.Println("call method --> ", f, args)
-	results := f.Call(args)
-	fmt.Println(results, ">>>>>")
+	fmt.Println("call class --> ", st, m.Options)
+	// class := f(m.Options)
+	// fmt.Println("call class --> ", class)
 
+	// method := reflect.ValueOf(class).MethodByName(m.MethodName)
+	// method.Call(args)
+	// v, ok := m.Options
+	// if ok {
+	// 	class := f(v)
+	// 	fmt.Println("call class --> ", class)
+	// 	fmt.Println("call method --> ", method)
+	// 	return nil, nil
+	// } else {
+	// 	fmt.Println("initParams format invalid")
 	return nil, nil
+	// }
 }
 
-func handle(header map[string]string, body string) (interface{}, error) {
-	fmt.Println("get message ", header, body)
-	var method Method
-	err := json.Unmarshal([]byte(body), &method)
+func handle(header map[string]string, body []byte) (interface{}, error) {
+	var entry Entry
+	err := json.Unmarshal(body, &entry)
+	fmt.Println("decode data", entry, reflect.TypeOf(entry.Options["Attr1"]))
 	if err != nil {
 		fmt.Println("convert str to json error", err)
 		return nil, err
 	}
-	return method.call()
+	return entry.Call()
 }

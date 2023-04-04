@@ -29,7 +29,7 @@ func Pack(body string) ([]byte, error) {
 	return pkg.Bytes(), nil
 }
 
-func Unpack(reader *bufio.Reader) (map[string]string, string, error) {
+func Unpack(reader *bufio.Reader) (map[string]string, []byte, error) {
 	// 读取消息的
 	header := make(map[string]string)
 
@@ -41,7 +41,7 @@ func Unpack(reader *bufio.Reader) (map[string]string, string, error) {
 		}
 		if err != nil {
 			fmt.Println("read from client failed, err:", err)
-			return nil, "", err
+			return nil, nil, err
 		}
 		if len(line) == 0 {
 			fmt.Println(">>> get header finish,header :", header)
@@ -57,13 +57,13 @@ func Unpack(reader *bufio.Reader) (map[string]string, string, error) {
 	content_length, err := strconv.ParseInt(header["content-length"], 10, 32)
 	if err != nil {
 		fmt.Println("convert content-length error", err)
-		return nil, "", err
+		return nil, nil, err
 	}
 	body := make([]byte, content_length)
 	_, err = reader.Read(body)
 	if err != nil {
 		fmt.Println("read body error", err)
-		return nil, "", err
+		return nil, nil, err
 	}
-	return header, string(body), nil
+	return header, body, nil
 }
