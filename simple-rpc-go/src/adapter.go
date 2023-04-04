@@ -30,7 +30,8 @@ func (m *Entry) Call() (interface{}, error) {
 	for _, arg := range m.Parameters {
 		args = append(args, reflect.ValueOf(arg))
 	}
-	fmt.Println("call class --> ", st, m.Options)
+	fmt.Println("call class --> ", st)
+
 	// class := f(m.Options)
 	// fmt.Println("call class --> ", class)
 
