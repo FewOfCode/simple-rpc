@@ -1,8 +1,10 @@
-package src
+package main
 
 import (
 	"fmt"
 	"net"
+
+	lib "github.com/FewOfCode/simple-rpc"
 )
 
 // 供客户端调用的接口,后期支持根据协议自动生成
@@ -31,7 +33,7 @@ func (t Math) Add(arg1 int, arg2 int) int {
 
 func main() {
 	// 注册下方法到全局MAP
-	Register("Math", Math{})
+	lib.Register("Math", Math{})
 	listen, err := net.Listen("tcp", "127.0.0.1:8000")
 	if err != nil {
 		fmt.Println("listen failed, err:", err)
@@ -43,6 +45,6 @@ func main() {
 			fmt.Println("accept failed, err:", err)
 			continue
 		}
-		go Process(conn) // 启动一个goroutine处理连接
+		go lib.Process(conn) // 启动一个goroutine处理连接
 	}
 }

@@ -1,4 +1,4 @@
-package main
+package src
 
 import (
 	"bufio"
@@ -10,19 +10,19 @@ import (
 	"strings"
 )
 
-func Pack(body string) ([]byte, error) {
+func Pack(body []byte) ([]byte, error) {
 	// 读取消息的长度，转换成int32类型（占4个字节）
-	var length = int32(len(body))
+	var length = len(body)
 	var pkg = new(bytes.Buffer)
 	// 先写入头部
-	header := []byte(fmt.Sprintf("version:1\r\ncontent-length:%s\r\n\r\n", string(length)))
+	header := []byte(fmt.Sprintf("version:1\r\ncontent-length:%d\r\n\r\n", length))
 	err := binary.Write(pkg, binary.LittleEndian, header)
 	if err != nil {
 		return nil, err
 	}
 
 	// 写入消息实体
-	err = binary.Write(pkg, binary.LittleEndian, []byte(body))
+	err = binary.Write(pkg, binary.LittleEndian, body)
 	if err != nil {
 		return nil, err
 	}
@@ -67,3 +67,28 @@ func Unpack(reader *bufio.Reader) (map[string]string, []byte, error) {
 	}
 	return header, body, nil
 }
+
+// 编码
+// func encode(data interface) ([]byte, error) {
+// 	//得到字节数组的编码器
+// 	var buf bytes.Buffer
+// 	bufEnc := gob.NewEncoder(&buf)
+// 	// 编码器对数据编码
+// 	if err := bufEnc.Encode(data); err != nil {
+// 		return nil, err
+// 	}
+// 	return buf.Bytes(), nil
+// }
+
+// // 解码
+// func decode(b []byte) (RPCData, error) {
+// 	buf := bytes.NewBuffer(b)
+// 	// 得到字节数组解码器
+// 	bufDec := gob.NewDecoder(buf)
+// 	// 解码器对数据节码
+// 	var data RPCData
+// 	if err := bufDec.Decode(&data); err != nil {
+// 		return data, err
+// 	}
+// 	return data, nil
+// }

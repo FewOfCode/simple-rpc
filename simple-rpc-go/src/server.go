@@ -1,14 +1,15 @@
-package main
+package src
 
 import (
 	"bufio"
-	"encoding/json"
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"net"
 )
 
 // 处理函数
-func process(conn net.Conn) {
+func Process(conn net.Conn) {
 	defer conn.Close() // 关闭连接
 	reader := bufio.NewReader(conn)
 	for {
@@ -17,35 +18,28 @@ func process(conn net.Conn) {
 			fmt.Println("get message error", err)
 			break
 		}
-		result, err := handle(header, body)
+		res, err := Handle(header, body)
 		if err != nil {
 			fmt.Println("handle error", err)
 			break
 		}
 		// 把结果发送出去
-		var msg = make(map[string]interface{})
-		msg["return"] = result
-		b, err := json.Marshal(msg)
-		if err != nil {
-			fmt.Println("convert to  json string error", err)
-			break
+		fmt.Println("call method result", res)
+		response := Result{
+			Result: res,
 		}
-		conn.Write(b)
+		var buf bytes.Buffer
+		bufEnc := gob.NewEncoder(&buf)
+		// 编码器对数据编码
+		if err := bufEnc.Encode(response); err != nil {
+			fmt.Println("encode result error", err)
+		} else {
+			msg := buf.Bytes()
+			_msg, err := Pack(msg)
+			if err != nil {
+				fmt.Println("get error when pack result", err)
+			}
+			conn.Write(_msg)
+		}
 	}
 }
-
-// func main() {
-// 	listen, err := net.Listen("tcp", "127.0.0.1:8000")
-// 	if err != nil {
-// 		fmt.Println("listen failed, err:", err)
-// 		return
-// 	}
-// 	for {
-// 		conn, err := listen.Accept() // 建立连接
-// 		if err != nil {
-// 			fmt.Println("accept failed, err:", err)
-// 			continue
-// 		}
-// 		go process(conn) // 启动一个goroutine处理连接
-// 	}
-// }

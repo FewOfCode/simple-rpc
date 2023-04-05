@@ -1,7 +1,8 @@
-package main
+package src
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"reflect"
 )
@@ -15,13 +16,15 @@ func Register(name string, T interface{}) {
 	simpleRpcApi[name] = reflect.ValueOf(T)
 }
 
-// func
-
 type Entry struct {
 	MethodName  string                 `json:"method_name"`
 	Parameters  map[string]interface{} `json:"parameters"`
 	MethodClass string                 `json:"method_class"`
 	Options     map[string]interface{} `json:"options"`
+}
+
+type Result struct {
+	Result interface{} `json:"result"`
 }
 
 func (m *Entry) Call() (interface{}, error) {
@@ -30,28 +33,21 @@ func (m *Entry) Call() (interface{}, error) {
 	for _, arg := range m.Parameters {
 		args = append(args, reflect.ValueOf(arg))
 	}
-	fmt.Println("call class --> ", st)
+	method := st.MethodByName(m.MethodName)
+	fmt.Println("call class --> ", method, args)
 
-	// class := f(m.Options)
-	// fmt.Println("call class --> ", class)
+	res := method.Call(args)
 
-	// method := reflect.ValueOf(class).MethodByName(m.MethodName)
-	// method.Call(args)
-	// v, ok := m.Options
-	// if ok {
-	// 	class := f(v)
-	// 	fmt.Println("call class --> ", class)
-	// 	fmt.Println("call method --> ", method)
-	// 	return nil, nil
-	// } else {
-	// 	fmt.Println("initParams format invalid")
-	return nil, nil
-	// }
+	return res, nil
 }
 
-func handle(header map[string]string, body []byte) (interface{}, error) {
+func Handle(header map[string]string, body []byte) (interface{}, error) {
 	var entry Entry
-	err := json.Unmarshal(body, &entry)
+	// err := json.Unmarshal(body, &entry)
+	buf := bytes.NewBuffer(body)
+	// 得到字节数组解码器
+	bufDec := gob.NewDecoder(buf)
+	err := bufDec.Decode(&entry)
 	fmt.Println("decode data", entry, reflect.TypeOf(entry.Options["Attr1"]))
 	if err != nil {
 		fmt.Println("convert str to json error", err)
