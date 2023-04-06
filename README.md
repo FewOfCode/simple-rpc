@@ -136,7 +136,7 @@ methods:
 
 #### go
 - [server](/simple-rpc-go/demo/server.go)
-- [client](/simple-rpc-go/demo/client.py)
+- [client](/simple-rpc-go/demo/client.go)
 
 
 # 开发计划
