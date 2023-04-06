@@ -67,28 +67,3 @@ func Unpack(reader *bufio.Reader) (map[string]string, []byte, error) {
 	}
 	return header, body, nil
 }
-
-// 编码
-// func encode(data interface) ([]byte, error) {
-// 	//得到字节数组的编码器
-// 	var buf bytes.Buffer
-// 	bufEnc := gob.NewEncoder(&buf)
-// 	// 编码器对数据编码
-// 	if err := bufEnc.Encode(data); err != nil {
-// 		return nil, err
-// 	}
-// 	return buf.Bytes(), nil
-// }
-
-// // 解码
-// func decode(b []byte) (RPCData, error) {
-// 	buf := bytes.NewBuffer(b)
-// 	// 得到字节数组解码器
-// 	bufDec := gob.NewDecoder(buf)
-// 	// 解码器对数据节码
-// 	var data RPCData
-// 	if err := bufDec.Decode(&data); err != nil {
-// 		return data, err
-// 	}
-// 	return data, nil
-// }

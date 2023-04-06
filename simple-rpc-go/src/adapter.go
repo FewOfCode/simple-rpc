@@ -7,28 +7,19 @@ import (
 	"reflect"
 )
 
-var simpleRpcApi map[string]reflect.Value = make(map[string]reflect.Value)
-
-func Register(name string, T interface{}) {
-	if _, ok := simpleRpcApi[name]; ok {
-		return
-	}
-	simpleRpcApi[name] = reflect.ValueOf(T)
-}
-
 type Entry struct {
-	MethodName  string                 `json:"method_name"`
-	Parameters  map[string]interface{} `json:"parameters"`
-	MethodClass string                 `json:"method_class"`
-	Options     map[string]interface{} `json:"options"`
+	MethodName string                 `json:"method_name"`
+	Parameters map[string]interface{} `json:"parameters"`
+	ClassName  string                 `json:"class_class"`
+	Options    map[string]interface{} `json:"options"`
 }
 
 type Result struct {
-	Result interface{} `json:"result"`
+	Result []interface{} `json:"result"`
 }
 
-func (m *Entry) Call() (interface{}, error) {
-	st := simpleRpcApi[m.MethodClass]
+func (m *Entry) Call(s *Server) ([]interface{}, error) {
+	st := s.ApiSet[m.ClassName]
 	args := make([]reflect.Value, 0, len(m.Parameters))
 	for _, arg := range m.Parameters {
 		args = append(args, reflect.ValueOf(arg))
@@ -36,12 +27,15 @@ func (m *Entry) Call() (interface{}, error) {
 	method := st.MethodByName(m.MethodName)
 	fmt.Println("call class --> ", method, args)
 
-	res := method.Call(args)
-
-	return res, nil
+	out := method.Call(args)
+	outArgs := make([]interface{}, 0, len(out))
+	for _, o := range out {
+		outArgs = append(outArgs, o.Interface())
+	}
+	return outArgs, nil
 }
 
-func Handle(header map[string]string, body []byte) (interface{}, error) {
+func Handle(header map[string]string, body []byte, s *Server) ([]interface{}, error) {
 	var entry Entry
 	// err := json.Unmarshal(body, &entry)
 	buf := bytes.NewBuffer(body)
@@ -53,5 +47,5 @@ func Handle(header map[string]string, body []byte) (interface{}, error) {
 		fmt.Println("convert str to json error", err)
 		return nil, err
 	}
-	return entry.Call()
+	return entry.Call(s)
 }
