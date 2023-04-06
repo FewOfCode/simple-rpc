@@ -134,6 +134,10 @@ methods:
 - [async_server](/simple-rpc-python/demo/async_py_server.py)
 - [client](/simple-rpc-python/demo/py_client.py)
 
+#### go
+- [server](/simple-rpc-go/demo/server.go)
+- [client](/simple-rpc-go/demo/client.py)
+
 
 # 开发计划
 
